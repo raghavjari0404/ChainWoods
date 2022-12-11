@@ -1,6 +1,6 @@
-# 🔥🎫  WoodTracker  📃🔥
+# WoodTracker  
 
-## 🥇The Blockchain based platform to track Wood smuggling. 💰
+## For a healthy body and healthy soul, saving and planting trees make your goal.
 ## Inspiration
 
 In spite of the fact that authorities, a task force, and forest organisations are all working together to put a stop to it, individuals continue to steal important trees all around the globe.
