@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import QrScanner from "qr-scanner";
 import axios from "axios";
 
-import woodtracker from "../abis/woodtracker.json";
+import woodtracker from "../abis/chainwoods.json";
 import countryList from "react-select-country-list";
 import {
 	CountryDropdown,
@@ -46,12 +46,13 @@ import {
 //} from 'semantic-ui-calendar-react';
 import { Web3Storage, getFilesFromPath } from "web3.storage";
 
-const token = "token";
+const token =
+	"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGIyMzk0ODk2NUNERjlBRjhmMDhGMDE4RERCN2Q2ODkxOTc4MmJmZkUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NzA1MTQzMjQ3MTAsIm5hbWUiOiJXb29kVHJhY2tlciJ9.FXFAuZCgd8fQqXpKFvWpJ94tLAGs-9cZAG1iFofrnTA";
 const client = new Web3Storage({ token });
 
-const ipfsClient = require("ipfs-http-client");
-const ipfs = ipfsClient("https://upload.estuary.tech/content/add"); // leaving out the arguments will default to these values
-const buffer = ipfs.Buffer;
+// const ipfsClient = require('ipfs-http-client');
+// const ipfs = ipfsClient('https://upload.estuary.tech/content/add'); // leaving out the arguments will default to these values
+// const buffer = ipfs.Buffer;
 
 export default class Export extends Component {
 	constructor(props) {
@@ -83,8 +84,8 @@ export default class Export extends Component {
 			cid: "",
 		};
 		this.generateQRCode = this.generateQRCode.bind(this);
-		this.blobtoimage = this.blobtoimage.bind(this);
-		this.ipfsupload = this.ipfsupload.bind(this);
+		//this.blobtoimage = this.blobtoimage.bind(this);
+		// this.ipfsupload = this.ipfsupload.bind(this);
 		this.filecoinupload = this.filecoinupload.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -132,6 +133,15 @@ export default class Export extends Component {
 				this.setState({ account: accounts[0] });
 			}.bind(this),
 		);
+
+		//console.log(web3);
+		//console.log(accounts);
+		// const networkId = await web3.eth.net.getId();
+		// const networkdata = CoalTracker.networks[networkId];
+
+		//   const coaltracker = new web3.eth.Contract(CoalTracker.abi, networkdata.address);
+		//   console.log(coaltracker);
+		//   this.setState({ coaltracker });
 	}
 
 	handleSubmit = async (event) => {
@@ -150,13 +160,13 @@ export default class Export extends Component {
 			await wood.methods
 				.exporter(id, this.state.cid)
 				.send({
-					from: "0xb65b3E896c2Be0f98b7B793bFA81E2512356ff42",
+					from: "0x4C8dB6E1617Af85A15EDE5200Ca48aF6ab8a0D78",
 					gas: 1000000,
 				})
 				.then((result) => {
 					console.log("Done");
 					this.setState({ loading: false });
-					alert("The coal has been successfully exported.");
+					alert("The wood been successfully exported.");
 				});
 		} catch (err) {
 			console.log(err);
@@ -275,8 +285,8 @@ export default class Export extends Component {
 
 	async upload(e) {
 		e.preventDefault();
-		loadBlockchainData();
-		console.log(wood);
+		// loadBlockchainData();
+		// console.log(wood);
 		console.log(this.state.qrfile);
 
 		const formData = new FormData();
@@ -296,7 +306,7 @@ export default class Export extends Component {
 					hashToPin: cid,
 				},
 				headers: {
-					Authorization: `Bearer token`,
+					Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJmNmQ0NmM5NS0wZGE5LTQxMWEtOTczYy1jMGUzNDFkZWY1YzgiLCJlbWFpbCI6ImNvbnRhY3RAa2V2YWx2YXZhbGl5YS50ZWNoIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6ImU0YzU0ZDBkNTc0OWNkODRhYjRmIiwic2NvcGVkS2V5U2VjcmV0IjoiNzkxYTdmNDE1YzBmNTY0NjJhYjYzNTE1YWQ4ODE2MGE2MGQyYWQzOGI2MTEzNzJhYmE5MjFmMjYxYzIzMTkzMyIsImlhdCI6MTY2NzcyNTUxMn0.htRoK5qP9IK7d2ffRDDlPa8f3CYGujijENNW_6YQqFQ`,
 					"Content-Type": "application/json",
 					"Access-Control-Allow-Origin": "*",
 				},
@@ -304,16 +314,16 @@ export default class Export extends Component {
 				.then((res) => {
 					console.log(res);
 
-					setImageUrl(`https://cloudflare-ipfs.com/ipfs/${cid}`);
+					// setImageUrl(`https://cloudflare-ipfs.com/ipfs/${cid}`);
 					return res.json();
 				})
 				.then((data) => {
 					console.log(data);
-					setImageUrl(`https://cloudflare-ipfs.com/ipfs/${cid}`);
+					// setImageUrl(`https://cloudflare-ipfs.com/ipfs/${cid}`);
 					return;
 				})
 				.catch((err) => {
-					console.log(err.response.data.error.details);
+					// console.log(err.response.data.error.details);
 					console.log(err);
 				});
 		};
@@ -329,7 +339,10 @@ export default class Export extends Component {
 			}
 		};
 		xhr.open("POST", "https://upload.estuary.tech/content/add");
-		xhr.setRequestHeader("Authorization", "Bearer API");
+		xhr.setRequestHeader(
+			"Authorization",
+			"Bearer EST549203f6-65bc-40e8-a837-a9c088b59910ARY",
+		);
 		xhr.setRequestHeader("allow-acess-controll", "*");
 
 		let respo = await xhr.send(formData);
@@ -337,225 +350,232 @@ export default class Export extends Component {
 		this.setState({ resp: respo });
 		this.setState({ ipfsuploaddone: true });
 	}
-
-	async ipfsupload() {
-		//let bufferedString = await Buffer.from(imageUrl.toString());
-		await ipfs.add(this.state.buffer, (error, result) => {
-			if (error) {
-				console.log(error);
-				alert("Error in uploading");
-			} else {
-				//console.log("ipfs hash",result);
-				this.setState({ ipfshash: result[0].hash });
-				alert(
-					"Your QR Code has been successfully published on IPFS Decentralised Storage.",
-				);
-			}
-		});
-		this.setState({ ipfsuploaddone: true });
-	}
+	// async ipfsupload() {
+	//   //let bufferedString = await Buffer.from(imageUrl.toString());
+	//   await ipfs.add(this.state.buffer, (error, result) => {
+	//     if (error) {
+	//       console.log(error);
+	//       alert("Error in uploading");
+	//     }
+	//     else {
+	//       //console.log("ipfs hash",result);
+	//       this.setState({ ipfshash: result[0].hash });
+	//       alert("Your QR Code has been successfully published on IPFS Decentralised Storage.");
+	//     }
+	//   });
+	//   this.setState({ ipfsuploaddone: true });
+	// }
 
 	render() {
 		return (
-			<Segment
-				inverted
-				style={{
-					backgroundColor: "#c2c2c2",
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
-				}}>
-				<h1>
-					{" "}
-					<font color="black">Wood Export Details</font>{" "}
-				</h1>
+			<>
 				<Segment
-					color="white"
-					className="raised segment"
-					style={{ margin: "50px" }}>
-					<Message
-						attached
-						header="Welcome to Wood Export Details Form!"
-						content="Fill out the form below to fill details and export the Wood."
-						icon="address book"
-					/>
-					<Form className="">
-						<br />
+					inverted
+					style={{
+						backgroundImage: "url('img/woodwarehouse.jpeg')",
+						backgroundRepeat: "no-repeat",
+						backgroundPosition: "center",
+						backgroundBlendMode: "overlay",
+						backgroundSize: "cover",
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+					}}>
+					<div
+						className="ui brown message big "
+						style={{ width: "505px" }}>
+						Wood Export Details
+					</div>
 
-						<Form.Group widths="equal">
-							<Form.Field>
-								<Input
-									label="Production ID"
-									fluid
-									ref={(input) => {
-										this.id = input;
-									}}
-									disabled={this.state.qrgendone == true}
-									//  labelPosition=""
-									value={this.state.id}
-									onChange={(event) =>
-										this.setState({
-											id: event.target.value,
-										})
-									}
-								/>{" "}
-							</Form.Field>
-
-							<Form.Field>
-								<Input
-									label="Quantity(in kg)"
-									fluid
-									ref={(input) => {
-										this.quantity = input;
-									}}
-									disabled={this.state.qrgendone == true}
-									value={this.state.quantity}
-									onChange={(event) =>
-										this.setState({
-											quantity: event.target.value,
-										})
-									}
-								/>
-							</Form.Field>
-						</Form.Group>
-						<br />
-						<div align="left">
-							<h3 color="black">From:</h3>
-							<br />
-						</div>
-						<CountryDropdown
-							value={this.state.fromcountry}
-							disabled={this.state.qrgendone == true}
-							onChange={(val) => this.selectCountry2(val)}
+					<Segment
+						color="white"
+						className="raised segment"
+						style={{ margin: "50px" }}>
+						<Message
+							attached
+							header="Welcome to Wood Export Details Form!"
+							content="Fill out the form below to fill details and export the Wood."
+							icon="address book"
 						/>
-						<br />
-						<div align="left">
-							<h3 color="black">To:</h3>
+						<Form className="">
 							<br />
-						</div>
-						<CountryDropdown
-							value={this.state.tocountry}
-							disabled={this.state.qrgendone == true}
-							onChange={(val) => this.selectCountry(val)}
-						/>
-						<br />
 
-						<br />
-						<Form.Group widths="equal">
-							<Form.Field>
-								<Input
-									label="Exporting License"
-									fluid
-									ref={(input) => {
-										this.exportinglicense = input;
-									}}
-									disabled={this.state.qrgendone == true}
-									value={this.state.exportinglicense}
-									onChange={(event) =>
-										this.setState({
-											exportinglicense:
-												event.target.value,
-										})
-									}
-								/>
-							</Form.Field>
-							<Form.Field>
-								<Input
-									label="Bill amount"
-									fluid
-									ref={(input) => {
-										this.billamt = input;
-									}}
-									disabled={this.state.qrgendone == true}
-									value={this.state.billamt}
-									onChange={(event) =>
-										this.setState({
-											billamt: event.target.value,
-										})
-									}
-								/>
-							</Form.Field>
-						</Form.Group>
+							<Form.Group widths="equal">
+								<Form.Field>
+									<Input
+										label="Production ID"
+										fluid
+										ref={(input) => {
+											this.id = input;
+										}}
+										disabled={this.state.qrgendone == true}
+										//  labelPosition=""
+										value={this.state.id}
+										onChange={(event) =>
+											this.setState({
+												id: event.target.value,
+											})
+										}
+									/>{" "}
+								</Form.Field>
 
-						<br />
-						<Form.Field>
-							<Checkbox
-								label="I agree that all the information is correct and properly verified."
-								onChange={(event) =>
-									this.setState({
-										checkbox: !this.state.checkbox,
-									})
-								}
+								<Form.Field>
+									<Input
+										label="Quantity(in kg)"
+										fluid
+										ref={(input) => {
+											this.quantity = input;
+										}}
+										disabled={this.state.qrgendone == true}
+										value={this.state.quantity}
+										onChange={(event) =>
+											this.setState({
+												quantity: event.target.value,
+											})
+										}
+									/>
+								</Form.Field>
+							</Form.Group>
+							<br />
+							<div align="left">
+								<h3 color="black">From:</h3>
+							</div>
+							<CountryDropdown
+								value={this.state.fromcountry}
+								disabled={this.state.qrgendone == true}
+								onChange={(val) => this.selectCountry2(val)}
 							/>
-						</Form.Field>
-						<br />
-						<Button
-							disabled={
-								this.state.id == "" ||
-								this.state.quantity == "" ||
-								this.state.tocountry == "" ||
-								this.state.fromcountry == "" ||
-								this.state.exportinglicense == "" ||
-								this.state.billamt == "" ||
-								this.state.checkbox == false ||
-								this.state.qrgendone == true
-							}
-							primary
-							onClick={this.generateQRCode}>
-							{" "}
-							Generate QR Code{" "}
-						</Button>
-						<br />
-						<br />
+							<br />
+							<div align="left">
+								<h3 color="black">To:</h3>
+							</div>
+							<CountryDropdown
+								value={this.state.tocountry}
+								disabled={this.state.qrgendone == true}
+								onChange={(val) => this.selectCountry(val)}
+							/>
+							<br />
 
-						{this.state.details ? (
-							<QRCode
-								id="qrc"
-								value={this.state.details}
+							<br />
+							<Form.Group widths="equal">
+								<Form.Field>
+									<Input
+										label="Exporting License"
+										fluid
+										ref={(input) => {
+											this.exportinglicense = input;
+										}}
+										disabled={this.state.qrgendone == true}
+										value={this.state.exportinglicense}
+										onChange={(event) =>
+											this.setState({
+												exportinglicense:
+													event.target.value,
+											})
+										}
+									/>
+								</Form.Field>
+								<Form.Field>
+									<Input
+										label="Bill amount"
+										fluid
+										ref={(input) => {
+											this.billamt = input;
+										}}
+										disabled={this.state.qrgendone == true}
+										value={this.state.billamt}
+										onChange={(event) =>
+											this.setState({
+												billamt: event.target.value,
+											})
+										}
+									/>
+								</Form.Field>
+							</Form.Group>
+
+							<br />
+							<Form.Field>
+								<Checkbox
+									label="I agree that all the information is correct and properly verified."
+									onChange={(event) =>
+										this.setState({
+											checkbox: !this.state.checkbox,
+										})
+									}
+								/>
+							</Form.Field>
+							<br />
+							<Button
 								disabled={
 									this.state.id == "" ||
 									this.state.quantity == "" ||
 									this.state.tocountry == "" ||
 									this.state.fromcountry == "" ||
 									this.state.exportinglicense == "" ||
-									this.state.billamt == null
+									this.state.billamt == "" ||
+									this.state.checkbox == false ||
+									this.state.qrgendone == true
 								}
-								size={290}
-								level={"H"}
-								includeMargin={true}
-								align="center"
-							/>
-						) : (
-							<p></p>
-						)}
+								primary
+								onClick={this.generateQRCode}
+								className="fluid">
+								{" "}
+								Generate QR Code{" "}
+							</Button>
+							<br />
+							<br />
 
-						<br />
+							{this.state.details ? (
+								<QRCode
+									id="qrc"
+									value={this.state.details}
+									disabled={
+										this.state.id == "" ||
+										this.state.quantity == "" ||
+										this.state.tocountry == "" ||
+										this.state.fromcountry == "" ||
+										this.state.exportinglicense == "" ||
+										this.state.billamt == null
+									}
+									size={290}
+									level={"H"}
+									includeMargin={true}
+									align="center"
+								/>
+							) : (
+								<p></p>
+							)}
 
-						<Button
-							disabled={
-								this.state.ipfsuploaddone == true ||
-								this.state.qrgendone == false
-							}
-							primary
-							onClick={(e) => this.upload(e)}>
-							{" "}
-							Publish to Filecoin{" "}
-						</Button>
+							<br />
 
-						<br />
-						<br />
+							<Button
+								disabled={
+									this.state.ipfsuploaddone == true ||
+									this.state.qrgendone == false
+								}
+								className="fluid"
+								primary
+								onClick={(e) => this.upload(e)}>
+								{" "}
+								Publish to Filecoin{" "}
+							</Button>
 
-						<Button
-							positive
-							disabled={this.state.ipfsuploaddone == false}
-							primary
-							onClick={this.handleSubmit}>
-							{" "}
-							Export{" "}
-						</Button>
-					</Form>
+							<br />
+							<br />
+
+							<Button
+								positive
+								disabled={this.state.ipfsuploaddone == false}
+								className="fluid"
+								primary
+								onClick={this.handleSubmit}>
+								{" "}
+								Export{" "}
+							</Button>
+						</Form>
+					</Segment>
 				</Segment>
-			</Segment>
+			</>
 		);
 	}
 }
