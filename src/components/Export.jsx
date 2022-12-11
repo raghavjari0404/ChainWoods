@@ -47,7 +47,7 @@ import {
 import { Web3Storage, getFilesFromPath } from "web3.storage";
 
 const token =
-	"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGIyMzk0ODk2NUNERjlBRjhmMDhGMDE4RERCN2Q2ODkxOTc4MmJmZkUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NzA1MTQzMjQ3MTAsIm5hbWUiOiJXb29kVHJhY2tlciJ9.FXFAuZCgd8fQqXpKFvWpJ94tLAGs-9cZAG1iFofrnTA";
+	"token";
 const client = new Web3Storage({ token });
 
 // const ipfsClient = require('ipfs-http-client');
@@ -306,7 +306,7 @@ export default class Export extends Component {
 					hashToPin: cid,
 				},
 				headers: {
-					Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJmNmQ0NmM5NS0wZGE5LTQxMWEtOTczYy1jMGUzNDFkZWY1YzgiLCJlbWFpbCI6ImNvbnRhY3RAa2V2YWx2YXZhbGl5YS50ZWNoIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6ImU0YzU0ZDBkNTc0OWNkODRhYjRmIiwic2NvcGVkS2V5U2VjcmV0IjoiNzkxYTdmNDE1YzBmNTY0NjJhYjYzNTE1YWQ4ODE2MGE2MGQyYWQzOGI2MTEzNzJhYmE5MjFmMjYxYzIzMTkzMyIsImlhdCI6MTY2NzcyNTUxMn0.htRoK5qP9IK7d2ffRDDlPa8f3CYGujijENNW_6YQqFQ`,
+					Authorization: `Bearer token`,
 					"Content-Type": "application/json",
 					"Access-Control-Allow-Origin": "*",
 				},
@@ -341,7 +341,7 @@ export default class Export extends Component {
 		xhr.open("POST", "https://upload.estuary.tech/content/add");
 		xhr.setRequestHeader(
 			"Authorization",
-			"Bearer EST549203f6-65bc-40e8-a837-a9c088b59910ARY",
+			"Bearer token",
 		);
 		xhr.setRequestHeader("allow-acess-controll", "*");
 
