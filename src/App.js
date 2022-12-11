@@ -45,8 +45,35 @@ class App extends Component {
 			);
 		}
 	}
+	async loadBlockchainData() {
+		const web3 = window.web3;
+		const accounts = await web3.eth.getAccounts();
+		//var paccount = accounts[0];
+		//var oldaccount=this.state.account;
+		this.setState({ account: accounts[0] });
+		window.ethereum.on(
+			"accountsChanged",
+			function (accounts) {
+				// Time to reload your interface with accounts[0]!
+				this.setState({ account: accounts[0] });
+			}.bind(this),
+		);
+
+		//console.log(web3);
+		//console.log(accounts);
+		//
+		const networkId = await web3.eth.net.getId();
+		const networkdata = CoalTracker.networks[networkId];
+		if (networkdata) {
+			const coaltracker = new web3.eth.Contract(
+				CoalTracker.abi,
+				networkdata.address,
+			);
+		}
+	}
 	async componentDidMount() {
 		await this.loadWeb3();
+		await this.loadBlockchainData();
 		this.getlandingPageData();
 	}
 
