@@ -46,13 +46,12 @@ import {
 //} from 'semantic-ui-calendar-react';
 import { Web3Storage, getFilesFromPath } from "web3.storage";
 
-const token =
-	"token";
+const token = "token";
 const client = new Web3Storage({ token });
 
-// const ipfsClient = require('ipfs-http-client');
-// const ipfs = ipfsClient('https://upload.estuary.tech/content/add'); // leaving out the arguments will default to these values
-// const buffer = ipfs.Buffer;
+const ipfsClient = require("ipfs-http-client");
+const ipfs = ipfsClient("https://upload.estuary.tech/content/add"); // leaving out the arguments will default to these values
+const buffer = ipfs.Buffer;
 
 export default class Export extends Component {
 	constructor(props) {
@@ -84,8 +83,8 @@ export default class Export extends Component {
 			cid: "",
 		};
 		this.generateQRCode = this.generateQRCode.bind(this);
-		//this.blobtoimage = this.blobtoimage.bind(this);
-		// this.ipfsupload = this.ipfsupload.bind(this);
+		this.blobtoimage = this.blobtoimage.bind(this);
+		this.ipfsupload = this.ipfsupload.bind(this);
 		this.filecoinupload = this.filecoinupload.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -133,15 +132,6 @@ export default class Export extends Component {
 				this.setState({ account: accounts[0] });
 			}.bind(this),
 		);
-
-		//console.log(web3);
-		//console.log(accounts);
-		// const networkId = await web3.eth.net.getId();
-		// const networkdata = CoalTracker.networks[networkId];
-
-		//   const coaltracker = new web3.eth.Contract(CoalTracker.abi, networkdata.address);
-		//   console.log(coaltracker);
-		//   this.setState({ coaltracker });
 	}
 
 	handleSubmit = async (event) => {
@@ -246,13 +236,123 @@ export default class Export extends Component {
 				ia[i] = byteString.charCodeAt(i);
 			}
 
+			// write the ArrayBuffer to a blob, and you're done
+			var blob = await new Blob([ab], { type: mimeString });
+			console.log("blob=", blob);
+			await this.setState({ blob: blob });
+			const imageUrl = URL.createObjectURL(blob);
+			//const myImage = document.getElementById('123');
+			//myImage.src = URL.createObjectURL(blob);
+			const myFile = await new File([this.state.blob], "image.png", {
+				type: this.state.blob.type,
+			});
+			console.log(myFile);
+			// const files = await getFilesFromPath(myFile.name)
+			// console.log(files);
+			// const cid = await client.put(files);
+			// this.setState({ qrgendone: true });
+			// console.log(cid);
+			await this.setState({ qrfile: myFile });
+			console.log("qrfile sent=", this.state.qrfile);
 
+			const reader = await new window.FileReader();
+			reader.readAsArrayBuffer(myFile);
+			// var blob = window.dataURLtoBlob(pngUrl);
+			reader.onloadend = () => {
+				//console.log("reader",reader.result);
+				this.setState({ buffer: Buffer(reader.result) });
+				//console.log("buffer",this.state.buffer);
+			};
+			this.setState({ qrgendone: true });
+		}
 	}
 
 	filecoinupload() {
 		console.log("qrfile received=", this.state.qrfile);
 		console.log(this.state.qrfile);
 		// this.upload();
+	}
+
+	async upload(e) {
+		e.preventDefault();
+		loadBlockchainData();
+		console.log(wood);
+		console.log(this.state.qrfile);
+
+		const formData = new FormData();
+		formData.append("data", this.state.qrfile);
+
+		// NOTE
+		// This example uses XMLHttpRequest() instead of fetch
+		// because we want to show progress. But you can use
+		// fetch in this example if you like.
+		const xhr = new XMLHttpRequest();
+
+		const pinImage = async (cid) => {
+			await axios({
+				method: "POST",
+				url: "https://api.pinata.cloud/pinning/pinByHash",
+				data: {
+					hashToPin: cid,
+				},
+				headers: {
+					Authorization: `Bearer token`,
+					"Content-Type": "application/json",
+					"Access-Control-Allow-Origin": "*",
+				},
+			})
+				.then((res) => {
+					console.log(res);
+
+					setImageUrl(`https://cloudflare-ipfs.com/ipfs/${cid}`);
+					return res.json();
+				})
+				.then((data) => {
+					console.log(data);
+					setImageUrl(`https://cloudflare-ipfs.com/ipfs/${cid}`);
+					return;
+				})
+				.catch((err) => {
+					console.log(err.response.data.error.details);
+					console.log(err);
+				});
+		};
+
+		xhr.onload = async () => {
+			if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+				let response = JSON.parse(xhr.response);
+				console.log(response.cid);
+				this.setState({ cid: response.cid });
+				// PIN image
+				await pinImage(response.cid);
+				// Access Uploaded image using CID / PIN
+			}
+		};
+		xhr.open("POST", "https://upload.estuary.tech/content/add");
+		xhr.setRequestHeader("Authorization", "Bearer API");
+		xhr.setRequestHeader("allow-acess-controll", "*");
+
+		let respo = await xhr.send(formData);
+
+		this.setState({ resp: respo });
+		this.setState({ ipfsuploaddone: true });
+	}
+
+	async ipfsupload() {
+		//let bufferedString = await Buffer.from(imageUrl.toString());
+		await ipfs.add(this.state.buffer, (error, result) => {
+			if (error) {
+				console.log(error);
+				alert("Error in uploading");
+			} else {
+				//console.log("ipfs hash",result);
+				this.setState({ ipfshash: result[0].hash });
+				alert(
+					"Your QR Code has been successfully published on IPFS Decentralised Storage.",
+				);
+			}
+		});
+		this.setState({ ipfsuploaddone: true });
 	}
 
 	render() {
